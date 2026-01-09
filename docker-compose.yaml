@@ -17,8 +17,6 @@ services:
         turn:
           enabled: true
           domain: livekit.appideax.com
-          external_ips:
-            - "${LIVEKIT_NODE_IP}"
           udp_port: 3478
     environment:
       LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
