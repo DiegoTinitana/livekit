@@ -3,13 +3,14 @@ services:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
-    # NO USAR network_mode: host aquí para que el Proxy de Coolify funcione
+    # NO USES network_mode: host (rompe el proxy de Coolify)
     ports:
-      - "7880:7880"         # API y WebSockets
-      - "3478:3478/udp"     # TURN UDP
-      - "3478:3478/tcp"     # TURN TCP
-      - "5349:5349/tcp"     # TURN TLS
-      - "50000-50500:50000-50500/udp" # Rango WebRTC
+      - "7880:7880"
+      - "7881:7881"
+      - "3478:3478/udp"
+      - "3478:3478/tcp"
+      - "5349:5349/tcp"
+      - "50000-50100:50000-50100/udp"
     command:
       - "--node-ip"
       - "${LIVEKIT_NODE_IP}"
@@ -19,7 +20,7 @@ services:
         rtc:
           tcp_port: 7881
           port_range_start: 50000
-          port_range_end: 50500
+          port_range_end: 50100
           use_external_ip: true
         turn:
           enabled: true
