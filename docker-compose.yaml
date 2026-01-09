@@ -1,18 +1,16 @@
 services:
   livekit:
-    image: 'livekit/livekit-server:latest'
+    image: livekit/livekit-server:latest
     container_name: livekit_server
-    command: >
-      --rtc-udp-port 7882
-      --signaling-port 7881
-      --api-port 7880
+    command: "--node-ip ${LIVEKIT_NODE_IP}"
     restart: always
     ports:
-      - '7880:7880'
-      - '7881:7881'
-      - '7882:7882/udp'
+      - "7880:7880"     # API / Admin
+      - "7881:7881"     # WebRTC TCP
+      - "7882:7882/udp" # WebRTC UDP
     environment:
-      LIVEKIT_KEYS: '${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}'
-      LIVEKIT_UDP_PORT: 7882
-      LIVEKIT_SIGNALING_PORT: 7881
-      LIVEKIT_API_PORT: 7880
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}"
+      NODE_IP: "${LIVEKIT_NODE_IP}"
+      UDP_PORT: "7882"
+      SIGNALING_PORT: "7881"
+      API_PORT: "7880"
