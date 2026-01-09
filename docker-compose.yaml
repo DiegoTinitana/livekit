@@ -3,7 +3,7 @@ services:
     image: livekit/livekit-server:latest
     container_name: livekit_server
     command: >
-      --config /etc/livekit.yaml
+      --config /etc/livekit/livekit.yaml
       --node-ip ${LIVEKIT_NODE_IP}
     restart: always
     ports:
@@ -13,4 +13,4 @@ services:
     environment:
       LIVEKIT_KEYS: "${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}"
     volumes:
-      - ./livekit.yaml:/etc/livekit.yaml
+      - ./livekit.yaml:/etc/livekit/livekit.yaml
