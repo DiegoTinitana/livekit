@@ -1,16 +1,17 @@
 services:
   livekit:
-    image: livekit/livekit-server:latest
+    image: 'livekit/livekit-server:latest'
     container_name: livekit_server
-    command: >
-      --config /etc/livekit/livekit.yaml
-      --node-ip ${LIVEKIT_NODE_IP}
+    command: "--config /etc/livekit/livekit.yaml --node-ip ${LIVEKIT_NODE_IP}"
     restart: always
     ports:
-      - "7880:7880"     # API / Admin
-      - "7881:7881"     # WebRTC TCP
-      - "7882:7882/udp" # WebRTC UDP
+      - '7880:7880'
+      - '7881:7881'
+      - '7882:7882/udp'
     environment:
-      LIVEKIT_KEYS: "${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}"
+      LIVEKIT_KEYS: '${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}'
     volumes:
-      - ./livekit.yaml:/etc/livekit/livekit.yaml
+      - type: bind
+        source: ./livekit.yaml
+        target: /etc/livekit/livekit.yaml
+        read_only: true
