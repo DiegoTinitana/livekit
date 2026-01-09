@@ -1,0 +1,9 @@
+server:
+  rtc:
+    udp_port: 7882
+  signaling_port: 7881
+  api_port: 7880
+
+keys:
+  - key: ${LIVEKIT_API_KEY}
+    secret: ${LIVEKIT_API_SECRET}
