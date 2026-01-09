@@ -4,20 +4,21 @@ services:
     container_name: livekit_server
     restart: always
     network_mode: "host"
-    command: >
-      --node-ip ${LIVEKIT_NODE_IP}
-      --config-body "
-      port: 7880
-      rtc:
-        tcp_port: 7881
-        port_range_start: 50000
-        port_range_end: 50500
-      turn:
-        enabled: true
-        domain: livekit.appideax.com
-        external_ip: ${LIVEKIT_NODE_IP}
-        udp_port: 3478
-      "
+    command:
+      - "--node-ip"
+      - "${LIVEKIT_NODE_IP}"
+      - "--config-body"
+      - |
+        port: 7880
+        rtc:
+          tcp_port: 7881
+          port_range_start: 50000
+          port_range_end: 51000
+        turn:
+          enabled: true
+          domain: livekit.appideax.com
+          external_ip: ${LIVEKIT_NODE_IP}
+          udp_port: 3478
     environment:
       LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
       NODE_IP: "${LIVEKIT_NODE_IP}"
