@@ -3,18 +3,24 @@ services:
     image: livekit/livekit-server:latest
     container_name: livekit
     restart: unless-stopped
-    network_mode: host  # CRÍTICO para TURN
+    network_mode: host
     
-    command: |
-      --keys "${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}"
-      --node-ip "${LIVEKIT_NODE_IP}"
-      --bind "0.0.0.0"
-      --rtc-port-range-start 50000
-      --rtc-port-range-end 60000
-      --turn
-      --turn-port 3478
-      --turn-tls-port 5349
-      --turn-external-tls
+    command:
+      - "--keys"
+      - "${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}"
+      - "--node-ip"
+      - "${LIVEKIT_NODE_IP}"
+      - "--config-body"
+      - |
+        port: 7880
+        rtc:
+          port_range_start: 50000
+          port_range_end: 60000
+        turn:
+          enabled: true
+          domain: livekit.appideax.com
+          udp_port: 3478
+          tls_port: 5349
     
     environment:
       LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
