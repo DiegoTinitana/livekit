@@ -2,7 +2,10 @@ services:
   livekit:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
-    command: "--config /etc/livekit/livekit.yaml --node-ip ${LIVEKIT_NODE_IP}"
+    command: >
+      --rtc-udp-port 7882
+      --signaling-port 7881
+      --api-port 7880
     restart: always
     ports:
       - '7880:7880'
@@ -10,8 +13,6 @@ services:
       - '7882:7882/udp'
     environment:
       LIVEKIT_KEYS: '${LIVEKIT_API_KEY}:${LIVEKIT_API_SECRET}'
-    volumes:
-      - type: bind
-        source: ./livekit.yaml
-        target: /etc/livekit/livekit.yaml
-        read_only: true
+      LIVEKIT_UDP_PORT: 7882
+      LIVEKIT_SIGNALING_PORT: 7881
+      LIVEKIT_API_PORT: 7880
