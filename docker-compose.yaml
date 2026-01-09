@@ -1,16 +1,16 @@
 services:
   livekit:
-    image: livekit/livekit-server:latest
+    image: 'livekit/livekit-server:latest'
     container_name: livekit_server
-    command: "--node-ip ${LIVEKIT_NODE_IP}"
+    # Agregamos la variable LIVEKIT_URL para que sepa su dominio
+    command: '--node-ip ${LIVEKIT_NODE_IP}'
     restart: always
     ports:
-      - "7880:7880"     # API / Admin
-      - "7881:7881"     # WebRTC TCP
-      - "7882:7882/udp" # WebRTC UDP
+      - '7880:7880'          # HTTP API / Signal
+      - '7881:7881'          # WebRTC sobre TCP
+      - '3478:3478/udp'       # TURN Server (VITAL para datos móviles)
+      - '50000-60000:50000-60000/udp' # Rango de Media (Voz)
     environment:
-      LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
-      NODE_IP: "${LIVEKIT_NODE_IP}"
-      UDP_PORT: "7882"
-      SIGNALING_PORT: "7881"
-      API_PORT: "7880"
+      LIVEKIT_KEYS: '${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}'
+      LIVEKIT_URL: 'https://tu-dominio.com' # Tu dominio con HTTPS
+      NODE_IP: '${LIVEKIT_NODE_IP}'
