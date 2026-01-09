@@ -21,6 +21,7 @@ services:
           domain: livekit.appideax.com
           udp_port: 3478
           tls_port: 5349
+          generate_cert: true  # LiveKit genera certificado
     
     environment:
       LIVEKIT_API_KEY: ${LIVEKIT_API_KEY}
