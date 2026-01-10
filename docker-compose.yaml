@@ -3,22 +3,68 @@ services:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
+
     ports:
-      - '7880:7880'
-      - '7881:7881'
-      - '3478:3478/udp'
-      - '5349:5349/tcp'
-      - '50000-50050:50000-50050/udp'
+      - '7880:7880'                # API / WSS
+      - '7881:7881'                # WebRTC TCP fallback
+      - '3478:3478/udp'            # TURN UDP
+      - '5349:5349/tcp'            # TURN TLS
+      - '50000-50050:50000-50050/udp'  # ICE/TURN relay
+
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+      LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
+
     volumes:
-      - '/opt/livekit/certs:/certs:ro'
+      - '/opt/livekit/certs:/certs:ro'   # certificados
+
     command:
       - '--node-ip'
       - '${LIVEKIT_NODE_IP}'
       - '--config-body'
-      - "port: 7880\nrtc:\n  tcp_port: 7881\n  port_range_start: 50000\n  port_range_end: 50050\n  use_external_ip: true\nturn:\n  enabled: true\n  domain: livekit.appideax.com\n  udp_port: 3478\n  tls_port: 5349\n  cert_file: /certs/fullchain.pem\n  key_file: /certs/privkey.pem\nkeys:\n  ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}\n"
+      - |
+        port: 7880
+        rtc:
+          tcp_port: 7881
+          port_range_start: 50000
+          port_range_end: 50050
+          use_external_ip: true
+        turn:
+          enabled: true
+          domain: turn.appideax.com
+          udp_port: 3478
+          tls_port: 5349
+          cert_file: /certs/turn/fullchain.pem
+          key_file: /certs/turn/privkey.pem
+          relay_range_start: 50000
+          relay_range_end: 50050
+        keys:
+          ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+
+
+# services:
+#   livekit:
+#     image: 'livekit/livekit-server:latest'
+#     container_name: livekit_server
+#     restart: always
+#     ports:
+#       - '7880:7880'
+#       - '7881:7881'
+#       - '3478:3478/udp'
+#       - '5349:5349/tcp'
+#       - '50000-50050:50000-50050/udp'
+#     environment:
+#       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
+#       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
+#       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+#     volumes:
+#       - '/opt/livekit/certs:/certs:ro'
+#     command:
+#       - '--node-ip'
+#       - '${LIVEKIT_NODE_IP}'
+#       - '--config-body'
+#       - "port: 7880\nrtc:\n  tcp_port: 7881\n  port_range_start: 50000\n  port_range_end: 50050\n  use_external_ip: true\nturn:\n  enabled: true\n  domain: livekit.appideax.com\n  udp_port: 3478\n  tls_port: 5349\n  cert_file: /certs/fullchain.pem\n  key_file: /certs/privkey.pem\nkeys:\n  ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}\n"
 
 
