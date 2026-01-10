@@ -40,7 +40,6 @@ services:
           key_file: /certs/privkey.pem
           relay_range_start: 50000
           relay_range_end: 50050
-          externalTLS: true
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
