@@ -1,3 +1,5 @@
+version: "3.9"
+
 services:
   livekit:
     image: 'livekit/livekit-server:latest'
@@ -15,10 +17,10 @@ services:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
-      LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'  # Tu clave TURN
+      LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
 
     volumes:
-      - '/opt/livekit/certs:/certs:ro'   # certificados de Coolify
+      - '/opt/livekit/certs:/certs:ro'   # certificados
 
     command:
       - '--node-ip'
@@ -33,15 +35,35 @@ services:
           use_external_ip: true
         turn:
           enabled: true
-          domain: turn.appideax.com   # actualizado al dominio TURN
+          domain: turn.appideax.com
           udp_port: 3478
           tls_port: 5349
-          cert_file: /certs/fullchain.pem
-          key_file: /certs/privkey.pem
+          cert_file: /certs/turn/fullchain.pem
+          key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
           relay_range_end: 50050
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+
+  certbot-turn:
+    image: certbot/certbot:latest
+    container_name: certbot_turn
+    restart: unless-stopped
+    volumes:
+      - '/opt/livekit/certs:/etc/letsencrypt'
+    command: >
+      sh -c "
+        if [ ! -f /etc/letsencrypt/live/turn/fullchain.pem ]; then
+          certbot certonly --standalone --non-interactive --agree-tos --email tu-email@dominio.com -d turn.appideax.com --cert-name turn;
+        fi &&
+        while true; do
+          certbot renew --deploy-hook 'echo Renovando certificado TURN';
+          sleep 12h;
+        done
+      "
+    ports:
+      - "80:80"   # solo para la validación HTTP
+
 
 # version: '3.9'
 # services:
