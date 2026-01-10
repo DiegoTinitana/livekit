@@ -1,37 +1,26 @@
+version: '3.9'
 services:
   livekit:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
     ports:
-      - "7880:7880"         # API / WebSockets (HTTPS lo pone Coolify)
-      - "7881:7881"         # WebRTC sobre TCP
-      - "3478:3478/udp"     # TURN UDP
-      - "3478:3478/tcp"     # TURN TCP
-      # Quitamos el 5349 para evitar el error de certificados
-      - "50000-50050:50000-50050/udp"
-    command:
-      - "--node-ip"
-      - "${LIVEKIT_NODE_IP}"
-      - "--config-body"
-      - |
-        port: 7880
-        rtc:
-          tcp_port: 7881
-          port_range_start: 50000
-          port_range_end: 50050
-          use_external_ip: true
-        turn:
-          enabled: true
-          domain: livekit.appideax.com
-          udp_port: 3478
-          # Eliminamos tls_port para que no pida archivos .crt o .key
-        keys:
-          ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+      - '7880:7880'
+      - '7881:7881'
+      - '3478:3478/udp'
+      - '5349:5349/tcp'
+      - '50000-50050:50000-50050/udp'
     environment:
-      LIVEKIT_API_KEY: "${LIVEKIT_API_KEY}"
-      LIVEKIT_API_SECRET: "${LIVEKIT_API_SECRET}"
-      LIVEKIT_NODE_IP: "${LIVEKIT_NODE_IP}"
+      LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
+      LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
+      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+    volumes:
+      - '/opt/livekit/certs:/certs:ro'
+    command:
+      - '--node-ip'
+      - '${LIVEKIT_NODE_IP}'
+      - '--config-body'
+      - "port: 7880\nrtc:\n  tcp_port: 7881\n  port_range_start: 50000\n  port_range_end: 50050\n  use_external_ip: true\nturn:\n  enabled: true\n  domain: livekit.appideax.com\n  udp_port: 3478\n  tls_port: 5349\n  cert_file: /certs/fullchain.pem\n  key_file: /certs/privkey.pem\nkeys:\n  ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}\n"
 
 # services:
 #   livekit:
