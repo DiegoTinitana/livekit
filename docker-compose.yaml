@@ -22,7 +22,7 @@ services:
 
     command:
       - '--node-ip'
-      - '86.48.22.209'
+      - '${LIVEKIT_NODE_IP}'
       - '--config-body'
       - |
         port: 7880
@@ -40,6 +40,7 @@ services:
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
           relay_range_end: 51000
+          external_tls: true
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
