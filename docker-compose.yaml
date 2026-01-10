@@ -1,4 +1,3 @@
-
 services:
   livekit:
     image: 'livekit/livekit-server:latest'
@@ -16,6 +15,7 @@ services:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+      LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'  # Tu clave TURN
 
     volumes:
       - '/opt/livekit/certs:/certs:ro'   # certificados de Coolify
@@ -33,9 +33,9 @@ services:
           use_external_ip: true
         turn:
           enabled: true
-          domain: livekit.appideax.com
+          domain: turn.appideax.com   # actualizado al dominio TURN
           udp_port: 3478
-          tls_port: 5349        # TCP TLS para clientes detrás de firewalls
+          tls_port: 5349
           cert_file: /certs/fullchain.pem
           key_file: /certs/privkey.pem
           relay_range_start: 50000
