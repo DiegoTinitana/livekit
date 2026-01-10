@@ -3,14 +3,13 @@ services:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
-    # Mapeo manual de puertos para que el Proxy de Coolify (Traefik) funcione
     ports:
-      - "7880:7880"         # API / WebSocket (HTTP -> HTTPS via Proxy)
-      - "7881:7881"         # RTC sobre TCP
+      - "7880:7880"         # API / WebSockets (HTTPS lo pone Coolify)
+      - "7881:7881"         # WebRTC sobre TCP
       - "3478:3478/udp"     # TURN UDP
       - "3478:3478/tcp"     # TURN TCP
-      - "5349:5349/tcp"     # TURN TLS
-      - "50000-50100:50000-50100/udp" # Rango WebRTC (reducido para estabilidad)
+      # Quitamos el 5349 para evitar el error de certificados
+      - "50000-50050:50000-50050/udp"
     command:
       - "--node-ip"
       - "${LIVEKIT_NODE_IP}"
@@ -20,26 +19,19 @@ services:
         rtc:
           tcp_port: 7881
           port_range_start: 50000
-          port_range_end: 50100
+          port_range_end: 50050
           use_external_ip: true
         turn:
           enabled: true
           domain: livekit.appideax.com
           udp_port: 3478
-          tls_port: 5349
-          # NOTA: Eliminamos 'external_ips' de aquí porque causaba el error de carga
+          # Eliminamos tls_port para que no pida archivos .crt o .key
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
     environment:
       LIVEKIT_API_KEY: "${LIVEKIT_API_KEY}"
       LIVEKIT_API_SECRET: "${LIVEKIT_API_SECRET}"
       LIVEKIT_NODE_IP: "${LIVEKIT_NODE_IP}"
-    # Conectamos a la red de Coolify para que el proxy lo vea
-    networks:
-      - coolify
-networks:
-  coolify:
-    external: true
 
 # services:
 #   livekit:
