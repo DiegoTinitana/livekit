@@ -3,22 +3,17 @@ services:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
-
-    ports:
-      - '7880:7880'                # API / WSS
-      - '7881:7881'                # WebRTC TCP fallback
-      - '3478:3478/udp'            # TURN UDP
-      - '5349:5349/tcp'            # TURN TLS
-      - '50000-51000:50000-51000/udp'  # ICE/TURN relay
+    # Esto soluciona el error 701 al conectar el contenedor directamente a la red del VPS
+    network_mode: "host" 
 
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+      LIVEKIT_NODE_IP: '86.48.22.209'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
 
     volumes:
-      - '/opt/livekit/certs:/certs:ro'   # certificados
+      - '/opt/livekit/certs:/certs:ro'
 
     command:
       - '--node-ip'
@@ -36,15 +31,14 @@ services:
           domain: turn.appideax.com
           udp_port: 3478
           tls_port: 5349
+          # Quitamos external_tls: true porque causó error. 
+          # Usamos los archivos directamente:
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
           relay_range_end: 51000
-          external_tls: true
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
-
 
 
 
