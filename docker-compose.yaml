@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   livekit:
-    image: 'livekit/livekit-server:1.5.10'  # Versión con soporte de audio
+    image: 'livekit/livekit-server:v1.9.0'  # Versión confirmada que existe
     container_name: livekit_server
     restart: always
     network_mode: "host"
@@ -51,7 +49,6 @@ services:
 
 
 
-
 # services:
 #   livekit:
 #     image: 'livekit/livekit-server:latest'
@@ -63,7 +60,7 @@ services:
 #     environment:
 #       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
 #       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-#       LIVEKIT_NODE_IP: '86.48.22.209'
+#       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
 #       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
 
 #     volumes:
