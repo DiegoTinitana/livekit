@@ -1,6 +1,6 @@
 services:
   livekit:
-    image: 'livekit/livekit-server:v1.9.0'  # Versión confirmada que existe
+    image: 'livekit/livekit-server:v1.9.0'
     container_name: livekit_server
     restart: always
     network_mode: "host"
@@ -28,12 +28,6 @@ services:
           port_range_end: 51000
           use_external_ip: true
         
-        audio:
-          inactive_interval: 500ms
-          enable_dtx: true
-          min_bitrate: 12000
-          max_bitrate: 32000
-        
         turn:
           enabled: true
           domain: turn.appideax.com
@@ -46,7 +40,6 @@ services:
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
 
 
 # services:
