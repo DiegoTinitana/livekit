@@ -9,7 +9,7 @@ services:
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '86.48.22.209'  # Solo IPv4
+      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'  # Solo IPv4
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
       # Opcional: forzar solo IPv4
       LIVEKIT_BIND_ADDRESS: '0.0.0.0'
