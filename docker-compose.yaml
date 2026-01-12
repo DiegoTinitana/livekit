@@ -3,15 +3,14 @@ services:
     image: 'livekit/livekit-server:latest'
     container_name: livekit_server
     restart: always
-    # Esto soluciona el error 701 al conectar el contenedor directamente a la red del VPS
     network_mode: "host"
 
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'  # Solo IPv4
+      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      # Opcional: forzar solo IPv4
+      # Variable de entorno para forzar IPv4
       LIVEKIT_BIND_ADDRESS: '0.0.0.0'
 
     volumes:
@@ -20,6 +19,8 @@ services:
     command:
       - '--node-ip'
       - '${LIVEKIT_NODE_IP}'
+      - '--bind'
+      - '0.0.0.0'  # Forzar IPv4 desde línea de comandos
       - '--config-body'
       - |
         port: 7880
@@ -28,86 +29,30 @@ services:
           port_range_start: 50000
           port_range_end: 51000
           use_external_ip: true
-          
-          # ============================================
-          # SOLUCIÓN 1: DESACTIVAR IPv6 (elimina saltos)
-          # ============================================
-          enable_ipv6: false
-          
-          # ============================================
-          # SOLUCIÓN 2: OPTIMIZAR AUDIO PARA BAJO CONSUMO
-          # ============================================
-          audio:
-            # Reducir paquetes en silencio (default: 100ms → 1000ms = 10x menos)
-            inactive_interval: 1000ms
-            # Activar transmisión discontinua en silencios
-            enable_dtx: true
-            # Calidad optimizada para voz (no música)
-            min_bitrate: 12000    # 12 kbps mínimo (teléfono)
-            max_bitrate: 32000    # 32 kbps máximo (calidad buena)
-            sample_rate: 16000    # 16 kHz (suficiente para voz)
-            # Codec preferido
-            preferred_codec: opus
+          # Aumentar timeout ICE para mayor estabilidad
+          ice_lite: true  # Simplificar ICE
         
-          # ============================================
-          # SOLUCIÓN 3: REDUCIR OVERHEAD DE CONTROL
-          # ============================================
-          # Reportes RTCP menos frecuentes (default: 1000ms → 5000ms)
-          rtcp_interval: 5000ms
-          
-          # ============================================
-          # SOLUCIÓN 4: ESTABILIZAR CONEXIONES ICE
-          # ============================================
-          # Intervalos más largos para checks ICE
-          ice_check_interval: 5000ms      # Default: 2000ms
-          ice_disconnected_timeout: 15000ms # Default: 5000ms
-          
-          # Servidores STUN externos como respaldo
-          ice_servers:
-            - urls: ["stun:stun.l.google.com:19302"]
-            - urls: ["stun:stun1.l.google.com:19302"]
+        audio:
+          inactive_interval: 1000ms
+          enable_dtx: true
+          min_bitrate: 12000
+          max_bitrate: 32000
         
-        # ============================================
-        # TURN CONFIGURACIÓN (IPv4 explícito)
-        # ============================================
         turn:
           enabled: true
           domain: turn.appideax.com
           udp_port: 3478
           tls_port: 5349
-          # Especificar IP externa explícitamente
-          external_ips: ["86.48.22.209"]
-          # Archivos de certificado
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
           relay_range_end: 51000
         
-        # ============================================
-        # LOGGING PARA MONITOREO
-        # ============================================
-        logging:
-          level: info
-          json: false
-          # Reducir logs de ICE para evitar spam
-          ice: warn
-        
-        # ============================================
-        # LLAVES DE API
-        # ============================================
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
         
-        # ============================================
-        # OPCIONAL: Estadísticas para debug
-        # ============================================
-        stats:
-          enabled: true
-          interval: 120s  # Cada 2 minutos (no en tiempo real)
-
-
-
-
+        # Logging ajustado
+        log_level: info
 
 
 
