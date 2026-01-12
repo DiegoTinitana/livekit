@@ -27,16 +27,12 @@ services:
           port_range_start: 50000
           port_range_end: 51000
           use_external_ip: true
-          # SOLUCIÓN DEFINITIVA para saltos IPv4/IPv6
-          enable_ipv6: false
-          external_ips: ["86.48.22.209"]
         
         turn:
           enabled: true
           domain: turn.appideax.com
           udp_port: 3478
           tls_port: 5349
-          external_tls: true
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
@@ -44,6 +40,7 @@ services:
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+          
 # funcional sin redes mobiles
 # services:
 #   livekit:
