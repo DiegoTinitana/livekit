@@ -42,6 +42,55 @@ services:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
 
+
+# versin para revisar eliminando el warning del stub todavia no provada
+
+# services:
+#   livekit:
+#     image: 'livekit/livekit-server:v1.9.0'
+#     container_name: livekit_server
+#     restart: always
+#     network_mode: "host"
+
+#     environment:
+#       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
+#       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
+#       LIVEKIT_NODE_IP: '86.48.22.209'
+#       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
+
+#     volumes:
+#       - '/opt/livekit/certs:/certs:ro'
+
+#     command:
+#       - '--node-ip'
+#       - '${LIVEKIT_NODE_IP}'
+#       - '--bind'
+#       - '0.0.0.0'
+#       - '--config-body'
+#       - |
+#         port: 7880
+#         rtc:
+#           tcp_port: 7881
+#           port_range_start: 50000
+#           port_range_end: 51000
+#           use_external_ip: false  # Evita validación STUN
+#           external_ips: ["86.48.22.209"]
+        
+#         turn:
+#           enabled: true
+#           domain: turn.appideax.com
+#           udp_port: 3478
+#           tls_port: 5349
+#           cert_file: /certs/turn/fullchain.pem
+#           key_file: /certs/turn/privkey.pem
+#           relay_range_start: 50000
+#           relay_range_end: 51000
+        
+#         keys:
+#           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
+
+
+# version con el error del salto ip v4 a v6
 # services:
 #   livekit:
 #     image: 'livekit/livekit-server:latest'
