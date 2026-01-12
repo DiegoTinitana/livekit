@@ -1,6 +1,8 @@
+version: '3.8'
+
 services:
   livekit:
-    image: 'livekit/livekit-server:latest'
+    image: 'livekit/livekit-server:1.5.10'  # Versión con soporte de audio
     container_name: livekit_server
     restart: always
     network_mode: "host"
@@ -10,8 +12,6 @@ services:
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      # Variable de entorno para forzar IPv4
-      LIVEKIT_BIND_ADDRESS: '0.0.0.0'
 
     volumes:
       - '/opt/livekit/certs:/certs:ro'
@@ -20,7 +20,7 @@ services:
       - '--node-ip'
       - '${LIVEKIT_NODE_IP}'
       - '--bind'
-      - '0.0.0.0'  # Forzar IPv4 desde línea de comandos
+      - '0.0.0.0'
       - '--config-body'
       - |
         port: 7880
@@ -29,11 +29,9 @@ services:
           port_range_start: 50000
           port_range_end: 51000
           use_external_ip: true
-          # Aumentar timeout ICE para mayor estabilidad
-          ice_lite: true  # Simplificar ICE
         
         audio:
-          inactive_interval: 1000ms
+          inactive_interval: 500ms
           enable_dtx: true
           min_bitrate: 12000
           max_bitrate: 32000
@@ -50,15 +48,6 @@ services:
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-        
-        # Logging ajustado
-        log_level: info
-
-
-
-
-
-
 
 
 
