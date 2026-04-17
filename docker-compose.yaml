@@ -1,15 +1,16 @@
+version: '3.8'
+
 services:
   livekit:
     image: 'livekit/livekit-server:v1.10.1'
     container_name: livekit_server
     restart: always
-    network_mode: "host"
+    network_mode: "bridge"  # Cambiar de 'host' a 'bridge' para tener control de la red
 
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      # FORZAMOS A QUE SOLO SE ANUNCIE ESTA IP
-      LIVEKIT_NODE_IP: '86.48.22.209'
+      LIVEKIT_NODE_IP: '86.48.22.209'  # Usar IPv4 explícitamente
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
       LIVEKIT_LOGGING_LEVEL: 'info'
 
@@ -18,17 +19,19 @@ services:
 
     command:
       - '--node-ip'
-      - '86.48.22.209'
+      - '86.48.22.209'  # Usar IPv4 explícitamente
       - '--bind'
-      - '0.0.0.0'
+      - '86.48.22.209'  # IPv4 explícita
+      - '--bind'
+      - '127.0.0.1'  # Dirección local IPv4
       - '--config-body'
       - |
         port: 7880
         rtc:
           tcp_port: 7881
           port_range_start: 50000
-          port_range_end: 51000
-          use_external_ip: true # <--- ESTO AYUDA A QUE NO USE IPs INTERNAS
+          port_range_end: 60000  # Rango completo para miles de usuarios
+          use_external_ip: true
         
         turn:
           enabled: true
@@ -38,11 +41,18 @@ services:
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
-          relay_range_end: 51000
+          relay_range_end: 60000
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
+networks:
+  default:
+    driver: bridge  # Asegura que usamos solo IPv4 dentro de la red bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.18.0.0/16"  # Asegurarse de que esta red usa solo IPv4
 
 # services:
 #   livekit:
