@@ -4,24 +4,20 @@ services:
     container_name: livekit_server
     restart: always
     network_mode: "host"
-
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-
+      # CONFIGURACIÓN DE LOGS AQUÍ (Esto limpia los logs sin dar error de flag)
+      LIVEKIT_LOGGING_LEVEL: 'info,pion:error,transport:warn'
     volumes:
       - '/opt/livekit/certs:/certs:ro'
-
     command:
       - '--node-ip'
       - '86.48.22.209'
       - '--bind'
       - '0.0.0.0'
-      # Pasamos los niveles de log aquí para evitar errores en el YAML
-      - '--logging-level'
-      - 'info,pion:error,transport:warn'
       - '--config-body'
       - |
         port: 7880
@@ -43,7 +39,6 @@ services:
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
 
 
 # services:
