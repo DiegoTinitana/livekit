@@ -8,10 +8,10 @@ services:
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+      # FORZAMOS A QUE SOLO SE ANUNCIE ESTA IP
+      LIVEKIT_NODE_IP: '86.48.22.209'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      # Cambiamos a nivel WARN para asegurar que desaparezcan los SDPs gigantes
-      LIVEKIT_LOGGING_LEVEL: 'warn' 
+      LIVEKIT_LOGGING_LEVEL: 'warn'
 
     volumes:
       - '/opt/livekit/certs:/certs:ro'
@@ -19,9 +19,8 @@ services:
     command:
       - '--node-ip'
       - '86.48.22.209'
-      # FORZAMOS EL BIND SOLO A TU IP V4 (Esto mata los saltos de IP v6)
       - '--bind'
-      - '86.48.22.209'
+      - '0.0.0.0'
       - '--config-body'
       - |
         port: 7880
@@ -29,7 +28,7 @@ services:
           tcp_port: 7881
           port_range_start: 50000
           port_range_end: 51000
-          use_external_ip: false
+          use_external_ip: true # <--- ESTO AYUDA A QUE NO USE IPs INTERNAS
         
         turn:
           enabled: true
