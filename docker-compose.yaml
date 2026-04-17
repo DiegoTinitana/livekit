@@ -1,6 +1,6 @@
 services:
   livekit:
-    image: 'livekit/livekit-server:v1.9.0'
+    image: 'livekit/livekit-server:v1.10.1'
     container_name: livekit_server
     restart: always
     network_mode: "host"
@@ -42,7 +42,6 @@ services:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
 
-
 # services:
 #   livekit:
 #     image: 'livekit/livekit-server:v1.9.0'
@@ -71,7 +70,7 @@ services:
 #           tcp_port: 7881
 #           port_range_start: 50000
 #           port_range_end: 51000
-#           use_external_ip: true
+#           use_external_ip: false
         
 #         turn:
 #           enabled: true
@@ -85,4 +84,3 @@ services:
         
 #         keys:
 #           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-          
