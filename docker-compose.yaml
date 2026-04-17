@@ -11,7 +11,7 @@ services:
       # FORZAMOS A QUE SOLO SE ANUNCIE ESTA IP
       LIVEKIT_NODE_IP: '86.48.22.209'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      LIVEKIT_LOGGING_LEVEL: 'warn'
+      LIVEKIT_LOGGING_LEVEL: 'info'
 
     volumes:
       - '/opt/livekit/certs:/certs:ro'
