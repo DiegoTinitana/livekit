@@ -8,9 +8,7 @@ services:
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '86.48.22.209'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      LIVEKIT_LOGGING_LEVEL: 'info'
 
     volumes:
       - '/opt/livekit/certs:/certs:ro'
@@ -18,24 +16,25 @@ services:
     command:
       - '--node-ip'
       - '86.48.22.209'
-      # Doble bind para que funcione tu Proxy (Nginx) y la IP Pública
       - '--bind'
-      - '86.48.22.209'
-      - '--bind'
-      - '127.0.0.1'
+      - '0.0.0.0'
       - '--config-body'
       - |
         port: 7880
+        
+        logging:
+          level: info
+          pion_level: error
+        
         rtc:
           tcp_port: 7881
           port_range_start: 50000
-          port_range_end: 60000
-          use_external_ip: true
-          # EL FILTRO REAL: Aquí le decimos a LiveKit que SOLO use esta IP
-          # Esto descarta cualquier candidato IPv6 automáticamente.
-          ip_whitelist:
-            - 86.48.22.209
-            - 127.0.0.1
+          port_range_end: 51000
+          use_external_ip: false
+          # NUEVO EN v1.10: forzar solo IPv4 en el node IP
+          node_ip:
+            v4: "86.48.22.209"
+            v6: ""
         
         turn:
           enabled: true
@@ -45,7 +44,7 @@ services:
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50000
-          relay_range_end: 60000
+          relay_range_end: 51000
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
