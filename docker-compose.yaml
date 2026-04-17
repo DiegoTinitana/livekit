@@ -1,16 +1,14 @@
-version: '3.8'
-
 services:
   livekit:
     image: 'livekit/livekit-server:v1.10.1'
     container_name: livekit_server
     restart: always
-    network_mode: "bridge"  # Cambiar de 'host' a 'bridge' para tener control de la red
+    network_mode: "host"
 
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '86.48.22.209'  # Usar IPv4 explícitamente
+      LIVEKIT_NODE_IP: '86.48.22.209'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
       LIVEKIT_LOGGING_LEVEL: 'info'
 
@@ -19,19 +17,25 @@ services:
 
     command:
       - '--node-ip'
-      - '86.48.22.209'  # Usar IPv4 explícitamente
+      - '86.48.22.209'
+      # Doble bind para que funcione tu Proxy (Nginx) y la IP Pública
       - '--bind'
-      - '86.48.22.209'  # IPv4 explícita
+      - '86.48.22.209'
       - '--bind'
-      - '127.0.0.1'  # Dirección local IPv4
+      - '127.0.0.1'
       - '--config-body'
       - |
         port: 7880
         rtc:
           tcp_port: 7881
           port_range_start: 50000
-          port_range_end: 60000  # Rango completo para miles de usuarios
+          port_range_end: 60000
           use_external_ip: true
+          # EL FILTRO REAL: Aquí le decimos a LiveKit que SOLO use esta IP
+          # Esto descarta cualquier candidato IPv6 automáticamente.
+          ip_whitelist:
+            - 86.48.22.209
+            - 127.0.0.1
         
         turn:
           enabled: true
@@ -46,13 +50,6 @@ services:
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
-networks:
-  default:
-    driver: bridge  # Asegura que usamos solo IPv4 dentro de la red bridge
-    ipam:
-      driver: default
-      config:
-        - subnet: "172.18.0.0/16"  # Asegurarse de que esta red usa solo IPv4
 
 # services:
 #   livekit:
