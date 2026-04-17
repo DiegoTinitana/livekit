@@ -4,20 +4,24 @@ services:
     container_name: livekit_server
     restart: always
     network_mode: "host"
+
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-      # CONFIGURACIÓN DE LOGS AQUÍ (Esto limpia los logs sin dar error de flag)
-      LIVEKIT_LOGGING_LEVEL: 'info,pion:error,transport:warn'
+      # Cambiamos a nivel WARN para asegurar que desaparezcan los SDPs gigantes
+      LIVEKIT_LOGGING_LEVEL: 'warn' 
+
     volumes:
       - '/opt/livekit/certs:/certs:ro'
+
     command:
       - '--node-ip'
       - '86.48.22.209'
+      # FORZAMOS EL BIND SOLO A TU IP V4 (Esto mata los saltos de IP v6)
       - '--bind'
-      - '0.0.0.0'
+      - '86.48.22.209'
       - '--config-body'
       - |
         port: 7880
