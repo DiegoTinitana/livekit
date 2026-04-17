@@ -4,15 +4,13 @@ services:
     container_name: livekit_server
     restart: always
     network_mode: "host"
-
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
+      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-
     volumes:
       - '/opt/livekit/certs:/certs:ro'
-
     command:
       - '--node-ip'
       - '86.48.22.209'
@@ -21,20 +19,11 @@ services:
       - '--config-body'
       - |
         port: 7880
-        
-        logging:
-          level: info
-          pion_level: error
-        
         rtc:
           tcp_port: 7881
           port_range_start: 50000
           port_range_end: 51000
           use_external_ip: false
-          # NUEVO EN v1.10: forzar solo IPv4 en el node IP
-          node_ip:
-            v4: "86.48.22.209"
-            v6: ""
         
         turn:
           enabled: true
@@ -48,7 +37,6 @@ services:
         
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
 
 # services:
 #   livekit:
