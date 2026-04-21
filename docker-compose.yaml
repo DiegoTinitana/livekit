@@ -15,7 +15,7 @@ services:
       - '--node-ip'
       - '86.48.22.209'
       - '--bind'
-      - '86.48.22.209'
+      - '0.0.0.0' # Permite comunicación interna con el proxy y externa IPv4
       - '--config-body'
       - |
         port: 7880
