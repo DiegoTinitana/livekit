@@ -3,20 +3,20 @@ services:
     image: 'livekit/livekit-server:v1.10.1'
     container_name: livekit_server
     restart: always
-    network_mode: "host"
+    network_mode: host
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '86.48.22.209'
+      LIVEKIT_NODE_IP: 86.48.22.209
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
     volumes:
       - '/opt/livekit/certs:/certs:ro'
     command:
-      - '--node-ip'
-      - '86.48.22.209'
-      - '--bind'
-      - '0.0.0.0' # Permite comunicación interna con el proxy y externa IPv4
-      - '--config-body'
+      - --node-ip
+      - 86.48.22.209
+      - --bind
+      - 0.0.0.0
+      - --config-body
       - |
         port: 7880
         rtc:
@@ -25,7 +25,6 @@ services:
           port_range_start: 50000
           port_range_end: 50500
           use_external_ip: false
-        
         turn:
           enabled: true
           domain: turn.appideax.com
@@ -35,10 +34,8 @@ services:
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50501
           relay_range_end: 51000
-        
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
 # services:
 #   livekit:
 #     image: 'livekit/livekit-server:v1.10.1'
