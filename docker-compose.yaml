@@ -8,24 +8,24 @@ services:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
       LIVEKIT_NODE_IP: '86.48.22.209'
+      LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
     volumes:
       - '/opt/livekit/certs:/certs:ro'
     command:
       - '--node-ip'
       - '86.48.22.209'
       - '--bind'
-      - '86.48.22.209' # <--- ESTO es lo que amarra el proceso a IPv4
+      - '86.48.22.209'
       - '--config-body'
       - |
         port: 7880
-        # bind_addresses: # OPCIONAL: También puedes ponerlo aquí a nivel global
-        #   - 86.48.22.209
         rtc:
           tcp_port: 7881
           udp_port: 7882
           port_range_start: 50000
           port_range_end: 50500
-          use_external_ip: true # <--- Obligatorio para que no anuncie la IPv6
+          use_external_ip: false
+        
         turn:
           enabled: true
           domain: turn.appideax.com
@@ -35,6 +35,7 @@ services:
           key_file: /certs/turn/privkey.pem
           relay_range_start: 50501
           relay_range_end: 51000
+        
         keys:
           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
 
