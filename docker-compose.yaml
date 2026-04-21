@@ -1,5 +1,4 @@
-services:
-  livekit:
+livekit:
     image: 'livekit/livekit-server:v1.10.1'
     container_name: livekit_server
     restart: always
@@ -7,32 +6,36 @@ services:
     environment:
       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-      LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
+      LIVEKIT_NODE_IP: '86.48.22.209' # Forzamos la IP aquí también
       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
     volumes:
       - '/opt/livekit/certs:/certs:ro'
     command:
       - '--node-ip'
       - '86.48.22.209'
-      - '--bind'
-      - '0.0.0.0'
       - '--config-body'
       - |
         port: 7880
         rtc:
           tcp_port: 7881
+          udp_port: 7882 # Agregamos un puerto UDP base explícito
           port_range_start: 50000
-          port_range_end: 51000
-          use_external_ip: false
+          port_range_end: 50500
+          use_external_ip: true # CAMBIAR A TRUE para que use estrictamente la node-ip
+          # Forzamos a que solo escuche en la IP pública IPv4
+          listen_addresses: 
+            - 86.48.22.209
         
         turn:
           enabled: true
           domain: turn.appideax.com
+          external_servers: []
           udp_port: 3478
           tls_port: 5349
           cert_file: /certs/turn/fullchain.pem
           key_file: /certs/turn/privkey.pem
-          relay_range_start: 50000
+          # Rango diferente al de RTC para evitar colisiones
+          relay_range_start: 50501
           relay_range_end: 51000
         
         keys:
@@ -44,16 +47,13 @@ services:
 #     container_name: livekit_server
 #     restart: always
 #     network_mode: "host"
-
 #     environment:
 #       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
 #       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
 #       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
 #       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-
 #     volumes:
 #       - '/opt/livekit/certs:/certs:ro'
-
 #     command:
 #       - '--node-ip'
 #       - '86.48.22.209'
@@ -80,23 +80,6 @@ services:
         
 #         keys:
 #           ${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}
-
-
-# services:
-#   livekit:
-#     image: 'livekit/livekit-server:v1.9.0'
-#     container_name: livekit_server
-#     restart: always
-#     network_mode: "host"
-
-#     environment:
-#       LIVEKIT_API_KEY: '${LIVEKIT_API_KEY}'
-#       LIVEKIT_API_SECRET: '${LIVEKIT_API_SECRET}'
-#       LIVEKIT_NODE_IP: '${LIVEKIT_NODE_IP}'
-#       LIVEKIT_TURN_SECRET: '${LIVEKIT_TURN_SECRET}'
-
-#     volumes:
-#       - '/opt/livekit/certs:/certs:ro'
 
 #     command:
 #       - '--node-ip'
